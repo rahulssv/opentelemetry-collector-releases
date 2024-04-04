@@ -27,24 +27,6 @@ goreleaser-verify: goreleaser
 ensure-goreleaser-up-to-date: generate-goreleaser
 	@git diff -s --exit-code distributions/*/.goreleaser.yaml || (echo "Build failed: The goreleaser templates have changed but the .goreleaser.yamls haven't. Run 'make generate-goreleaser' and update your PR." && exit 0)
 
-.PHONY: ocb
-ocb:
-ifeq (, $(shell command -v ocb 2>/dev/null))
-	@{ \
-	[ ! -x '$(OTELCOL_BUILDER)' ] || exit 0; \
-	set -e ;\
-	os=$$(uname | tr A-Z a-z) ;\
-	machine=$$(uname -m) ;\
-	[ "$${machine}" != x64 ] || machine=ppc64le ;\
-	[ "$${machine}" != x86_64 ] || machine=amd64 ;\
-	echo "Installing ocb ($${os}/$${machine}) at $(OTELCOL_BUILDER_DIR)";\
-	mkdir -p $(OTELCOL_BUILDER_DIR) ;\
-	curl -sfLo $(OTELCOL_BUILDER) "https://github.com/open-telemetry/opentelemetry-collector/releases/download/cmd%2Fbuilder%2Fv$(OTELCOL_BUILDER_VERSION)/ocb_$(OTELCOL_BUILDER_VERSION)_$${os}_$${machine}" ;\
-	chmod +x $(OTELCOL_BUILDER) ;\
-	}
-else
-OTELCOL_BUILDER=$(shell command -v ocb)
-endif
 
 .PHONY: go
 go:
