@@ -1,6 +1,7 @@
 name: Reusable GoReleaser CI workflow
 
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
       distribution:
@@ -11,8 +12,8 @@ jobs:
   check-goreleaser:
     strategy:
       matrix:
-        GOOS: [ linux, windows, darwin ]
-        GOARCH: [ "386", amd64, arm64, ppc64le, arm, s390x ]
+        GOOS: [ linux]
+        GOARCH: [ppc64le]
         exclude:
           - GOOS: darwin
             GOARCH: "386"
@@ -26,33 +27,32 @@ jobs:
             GOARCH: arm
           - GOOS: windows
             GOARCH: s390x
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-20.04-ppc64le
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64,ppc64le,linux/arm/v7,s390x
-
       - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v2
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v4
         with:
           go-version: '~1.22.1'
+          architecture: ppc64le
           check-latest: true
 
+      - name: Setup make
+        run: sudo apt install -qy make
+        
       - name: Generate the sources
         run: make generate-sources
 
       - name: Run GoReleaser for ${{ inputs.distribution }}
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v3
         with:
           distribution: goreleaser-pro
           version: latest
@@ -61,4 +61,4 @@ jobs:
         env:
           GOOS: ${{ matrix.GOOS }}
           GOARCH: ${{ matrix.GOARCH }}
-          GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+         # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
