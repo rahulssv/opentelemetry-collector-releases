@@ -35,7 +35,7 @@ ifeq (, $(shell command -v ocb 2>/dev/null))
 	set -e ;\
 	os=$$(uname | tr A-Z a-z) ;\
 	machine=$$(uname -m) ;\
-	[ "$${machine}" != ppc64le ] || machine=386 ;\
+	[ "$${machine}" != x64 ] || machine=ppc64le ;\
 	[ "$${machine}" != x86_64 ] || machine=amd64 ;\
 	echo "Installing ocb ($${os}/$${machine}) at $(OTELCOL_BUILDER_DIR)";\
 	mkdir -p $(OTELCOL_BUILDER_DIR) ;\
