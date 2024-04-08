@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         GOOS: [ linux]
-        GOARCH: [ppc64le]
+        GOARCH: [amd64]
         exclude:
           - GOOS: darwin
             GOARCH: "386"
@@ -27,7 +27,7 @@ jobs:
             GOARCH: arm
           - GOOS: windows
             GOARCH: s390x
-    runs-on: ubuntu-20.04-ppc64le
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -42,7 +42,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '~1.22.1'
-          architecture: ppc64le
+          # architecture: ppc64le
           check-latest: true
 
       - name: Setup make
